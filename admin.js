@@ -6,13 +6,13 @@ async function loadPending() {
     body: JSON.stringify({ action:'listPending' })
   });
   const { users } = await res.json();
-  const html = users.map(u =>
-    `<div>
-      ${u.Username} (${u.Email}) – ${u.Department}
-      <button onclick="approve('${u.Email}')">Approve</button>
-    </div>`
-  ).join('');
-  document.getElementById('pendingList').innerHTML = html;
+  document.getElementById('pendingList').innerHTML =
+    users.map(u =>
+      `<div class="card mb-2 p-3">
+         ${u.Username} (${u.Email}) – ${u.Department}
+         <button class="btn btn-sm btn-success float-right"
+                 onclick="approve('${u.Email}')">Approve</button>
+       </div>`).join('');
 }
 
 async function approve(email) {
