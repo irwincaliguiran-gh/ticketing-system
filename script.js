@@ -1,7 +1,8 @@
 const API = 'https://script.google.com/macros/s/AKfycbw1hL2ieVNC2dOmT2AwUgQgOgTPaNPFH1PfUZ1IDTkVmjygCUnxssirKt9F5Q3_j_JY/exec';
+
 function show(id) {
   ['login','register'].forEach(f =>
-    document.getElementById(f).style.display = (f===id ? 'block' : 'none')
+    document.getElementById(f).style.display = (f===id?'block':'none')
   );
 }
 
@@ -9,6 +10,7 @@ function hashPwd(p) {
   return CryptoJS.SHA256(p).toString();
 }
 
+// Sign in (username/password)
 async function signIn(e) {
   e.preventDefault();
   const username = document.getElementById('liUser').value;
@@ -24,6 +26,7 @@ async function signIn(e) {
   } else alert(message);
 }
 
+// Register new user
 async function register(e) {
   e.preventDefault();
   const data = {
