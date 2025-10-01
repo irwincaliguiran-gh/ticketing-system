@@ -3,18 +3,19 @@
 <head>
   <meta charset="UTF-8">
   <title>Ticketing System – Login</title>
-  <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css"
-        rel="stylesheet">
+  <link rel="stylesheet"
+    href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
   <script src="https://cdnjs.cloudflare.com/ajax/libs/crypto-js/4.1.1/crypto-js.min.js"></script>
   <script src="script.js" defer></script>
 </head>
 <body class="bg-light">
   <div class="container py-5">
-    <h1 class="mb-4 text-center">Ticketing System</h1>
-    <div class="d-flex justify-content-center mb-3">
+    <h1 class="text-center mb-4">Ticketing System</h1>
+    <div class="text-center mb-4">
       <button class="btn btn-primary mx-2" onclick="show('login')">Sign In</button>
       <button class="btn btn-secondary mx-2" onclick="show('register')">Create Account</button>
     </div>
+    <!-- Sign In -->
     <form id="login" class="card p-4 mx-auto" style="max-width:400px; display:none;"
           onsubmit="signIn(event)">
       <h4 class="mb-3">Sign In</h4>
@@ -22,14 +23,15 @@
       <input id="liPass" type="password" class="form-control mb-3" placeholder="Password" required>
       <button class="btn btn-success btn-block">Login</button>
     </form>
+    <!-- Create Account -->
     <form id="register" class="card p-4 mx-auto" style="max-width:400px; display:none;"
           onsubmit="register(event)">
       <h4 class="mb-3">Create Account</h4>
-      <input id="reUser" class="form-control mb-2" placeholder="Username" required>
-      <input id="reEmail" type="email" class="form-control mb-2" placeholder="Email" required>
-      <input id="rePass" type="password" class="form-control mb-2" placeholder="Password" required>
-      <input id="reContact" class="form-control mb-2" placeholder="Contact Number" required>
-      <input id="reDept" class="form-control mb-3" placeholder="Department" required>
+      <input id="reUser"     class="form-control mb-2" placeholder="Username" required>
+      <input id="reEmail"    type="email" class="form-control mb-2" placeholder="Email" required>
+      <input id="rePass"     type="password" class="form-control mb-2" placeholder="Password" required>
+      <input id="reContact"  class="form-control mb-2" placeholder="Contact Number" required>
+      <input id="reDept"     class="form-control mb-3" placeholder="Department" required>
       <button class="btn btn-primary btn-block">Register</button>
     </form>
   </div>
