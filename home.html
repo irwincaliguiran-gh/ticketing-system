@@ -1,24 +1,32 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
   <meta charset="UTF-8">
   <title>Dashboard – Ticketing</title>
+  <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css"
+        rel="stylesheet">
   <script src="home.js" defer></script>
 </head>
-<body>
-  <h1>Welcome, <span id="usr"></span></h1>
-  <button onclick="viewTickets()">View Tickets</button>
-  <button onclick="toggleForm()">Submit Ticket</button>
-  <input id="searchBox" placeholder="Search tickets">
-  <button onclick="search()">Search</button>
-
-  <div id="ticketForm" style="display:none;">
-    <h2>New Ticket</h2>
-    <input id="tTitle" placeholder="Title" required>
-    <textarea id="tDesc" placeholder="Description" required></textarea>
-    <button onclick="submitTicket()">Submit</button>
+<body class="bg-white">
+  <div class="container py-5">
+    <h1>Welcome, <span id="usr"></span></h1>
+    <div class="btn-group mb-4">
+      <button class="btn btn-info" onclick="viewTickets()">View Tickets</button>
+      <button class="btn btn-success" onclick="toggleForm()">Submit Ticket</button>
+    </div>
+    <div class="input-group mb-4" style="max-width:400px;">
+      <input id="searchBox" class="form-control" placeholder="Search tickets">
+      <div class="input-group-append">
+        <button class="btn btn-outline-secondary" onclick="search()">Search</button>
+      </div>
+    </div>
+    <div id="ticketForm" class="card p-4 mb-4" style="display:none; max-width:500px;">
+      <h4>New Ticket</h4>
+      <input id="tTitle" class="form-control mb-2" placeholder="Title" required>
+      <textarea id="tDesc" class="form-control mb-3" placeholder="Description" required></textarea>
+      <button class="btn btn-primary" onclick="submitTicket()">Submit</button>
+    </div>
+    <div id="content"></div>
   </div>
-
-  <div id="content"></div>
 </body>
 </html>
