@@ -1,17 +1,22 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-  <meta charset="UTF-8">
-  <title>Admin – Pending Users</title>
-  <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css"
-        rel="stylesheet">
-  <script src="admin.js" defer></script>
-</head>
-<body class="bg-light">
-  <div class="container py-5">
-    <h1>Pending Registrations</h1>
-    <button class="btn btn-sm btn-outline-primary mb-3" onclick="loadPending()">Refresh</button>
-    <div id="pendingList"></div>
-  </div>
-</body>
-</html>
+<h2>Admin Dashboard</h2>
+<section id="pendingUsers">
+  <h3>Pending Accounts</h3>
+  <table id="usersTable"></table>
+</section>
+<section id="allTickets">
+  <h3>All Tickets</h3>
+  <button onclick="loadTickets(true)">Refresh</button>
+  <table id="ticketsTable"></table>
+</section>
+<script>
+function loadPendingUsers(){
+  google.script.run.withSuccessHandler(populateUsers).doPost({action:'listPendingUsers'});
+}
+function populateUsers(data){
+  // render rows with Approve buttons
+}
+function loadTickets(all){
+  google.script.run.withSuccessHandler(renderTickets).doPost({action:'listTickets', all:all});
+}
+window.onload = loadPendingUsers;
+</script>
