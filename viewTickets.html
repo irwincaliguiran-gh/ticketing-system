@@ -1,0 +1,9 @@
+<table id="myTickets"></table>
+<script>
+function loadMyTickets(){
+  google.script.run.withSuccessHandler(r=>{
+    // build table rows
+  }).doPost({action:'listTickets', all:false});
+}
+window.onload=loadMyTickets;
+</script>
