@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Admin ‑ Ticketing System</title>
+  <link
+    href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css"
+    rel="stylesheet"
+  />
+</head>
+<body>
+  <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+    <div class="container-fluid">
+      <a class="navbar-brand" href="#">Admin Panel</a>
+      <div>
+        <button class="btn btn-outline-light" id="logoutBtn">Logout</button>
+      </div>
+    </div>
+  </nav>
+
+  <main class="container my-4">
+    <section>
+      <h5>Pending User Approvals</h5>
+      <table class="table table-sm" id="pendingUsersTbl">
+        <thead>
+          <tr>
+            <th>Username</th>
+            <th>Email</th>
+            <th>Contact</th>
+            <th>Dept</th>
+            <th>Action</th>
+          </tr>
+        </thead>
+        <tbody></tbody>
+      </table>
+    </section>
+
+    <hr />
+
+    <section>
+      <h5>All Tickets</h5>
+      <table class="table table-striped" id="allTicketsTbl">
+        <thead>
+          <tr>
+            <th>TicketID</th>
+            <th>Proj #</th>
+            <th>Name</th>
+            <th>Status</th>
+            <th>Actions</th>
+          </tr>
+        </thead>
+        <tbody></tbody>
+      </table>
+    </section>
+  </main>
+
+  <script src="script.js"></script>
+</body>
+</html>
