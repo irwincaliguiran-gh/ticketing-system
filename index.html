@@ -7,7 +7,7 @@
   <body>
     <nav class="navbar navbar-expand-lg navbar-dark bg-primary">
       <div class="container-fluid">
-        <span class="navbar-brand brand-title">FPI OS Ticketing System</span>
+        <span class="navbar-brand brand-title">Ticketing System</span>
         <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarsExample">
           <span class="navbar-toggler-icon"></span>
         </button>
@@ -15,18 +15,23 @@
           <ul class="navbar-nav me-auto mb-2 mb-lg-0" id="navLinks" style="display:none;">
             <li class="nav-item">#Home</a></li>
             <li class="nav-item">#View Tickets</a></li>
-            <li class="nav-item"><a class="nav-link" href="#" onclick="showi class="nav-item">#Search Tickets</a></li>
+            <li class="nav-item">#Submit New Ticket</a></li>
+            <li class="nav-item">#Search Tickets</a></li>
             <li class="nav-item admin-only hidden">#Admin</a></li>
+            <li class="nav-item admin-only hidden">#Audit Logs</a></li>
           </ul>
-          <span class="navbar-text text-light me-3" id="navUser"></span>
-          <button class="btn btn-outline-light" id="logoutBtn" style="display:none;" onclick="logout()">Sign out</button>
+          <div class="d-flex align-items-center gap-2">
+            <span class="navbar-text text-light" id="navUser"></span>
+            <button class="btn btn-outline-light" id="changePwdBtn" style="display:none;" data-bs-toggle="modal" data-bs-target="#modalChangePwd">Change Password</button>
+            <button class="btn btn-outline-light" id="logoutBtn" style="display:none;" onclick="logout()">Sign out</button>
+          </div>
         </div>
       </div>
     </nav>
 
     <div class="app-container">
 
-      <!-- LOGIN / REGISTER -->
+      <!-- LOGIN / REGISTER / RESET -->
       <div data-section="login">
         <div class="row justify-content-center">
           <div class="col-lg-6">
@@ -53,7 +58,10 @@
                         <input type="password" id="si_password" class="form-control" required>
                       </div>
                       <button class="btn btn-primary w-100" type="submit">Sign In</button>
-                      <div class="form-text mt-2">Admin account: <b>admin / admin</b></div>
+                      <div class="d-flex justify-content-between mt-2">
+                        <div class="form-text">Admin account: <b>admin / admin</b></div>
+                        <Forgot password?</a>
+                      </div>
                     </form>
                   </div>
                   <div class="tab-pane fade" id="tabRegister" role="tabpanel">
@@ -87,8 +95,25 @@
                     </form>
                   </div>
                 </div>
+
+                <!-- RESET PASSWORD SECTION (when opened by token link) -->
+                <div id="resetSection" class="mt-4" style="display:none;">
+                  <h5>Reset Password</h5>
+                  <form onsubmit="event.preventDefault(); resetPasswordWithToken();">
+                    <div class="mb-3">
+                      <label class="form-label">New Password</label>
+                      <input type="password" id="rp_new" class="form-control" required>
+                    </div>
+                    <div class="mb-3">
+                      <label class="form-label">Confirm New Password</label>
+                      <input type="password" id="rp_confirm" class="form-control" required>
+                    </div>
+                    <button class="btn btn-primary">Set New Password</button>
+                  </form>
+                </div>
+
               </div>
-            </div> <!-- /card -->
+            </div>
           </div>
         </div>
       </div> <!-- /login -->
@@ -108,7 +133,11 @@
         <div class="d-flex justify-content-between align-items-center mb-2">
           <h4>My Tickets</h4>
           <div class="d-flex gap-2">
-            <button class="btn btn-outline-primary" onclick="exportPdf('mine')">Export to PDF</button>
+            <div class="btn-group">
+              <button class="btn btn-outline-primary" onclick="exportPdf('mine')">PDF</button>
+              <button class="btn btn-outline-primary" onclick="exportCsv('mine')">CSV</button>
+              <button class="btn btn-outline-primary" onclick="exportXlsx('mine')">Excel</button>
+            </div>
             <button class="btn btn-outline-secondary" onclick="loadMyTicketsTable()">Refresh</button>
           </div>
         </div>
@@ -198,13 +227,91 @@
         </form>
       </div>
 
-      <!-- SEARCH -->
+      <!-- SIMPLE SEARCH + ADVANCED FILTERS -->
       <div data-section="search" class="hidden">
         <h4>Search Tickets</h4>
         <div class="input-group mb-3">
           <input id="searchQuery" type="text" class="form-control" placeholder="Search by ID, project #, name, manager, priority, team, status...">
           <button class="btn btn-outline-primary" onclick="performSearch()">Search</button>
         </div>
+
+        <div class="accordion mb-3" id="advAcc">
+          <div class="accordion-item">
+            <h2 class="accordion-header" id="advHead">
+              <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#advBody">Advanced Filters</button>
+            </h2>
+            <div id="advBody" class="accordion-collapse collapse">
+              <div class="accordion-body">
+                <form onsubmit="event.preventDefault(); performAdvancedSearch();">
+                  <div class="row g-3">
+                    <div class="col-md-3">
+                      <label class="form-label">Ticket ID</label>
+                      <input id="af_ticketId" class="form-control">
+                    </div>
+                    <div class="col-md-3">
+                      <label class="form-label">Project #</label>
+                      <input id="af_projectNumber" class="form-control">
+                    </div>
+                    <div class="col-md-3">
+                      <label class="form-label">Project Name</label>
+                      <input id="af_projectName" class="form-control">
+                    </div>
+                    <div class="col-md-3">
+                      <label class="form-label">Manager</label>
+                      <input id="af_projectManager" class="form-control">
+                    </div>
+                    <div class="col-md-3">
+                      <label class="form-label">Assigned Team</label>
+                      <input id="af_assignedTeam" class="form-control">
+                    </div>
+                    <div class="col-md-3">
+                      <label class="form-label">Priority</label>
+                      <select id="af_priority" class="form-select" multiple>
+                        <option>Low</option><option>Medium</option><option>High</option><option>Critical</option>
+                      </select>
+                      <div class="form-text">Ctrl/Cmd-click for multiple</div>
+                    </div>
+                    <div class="col-md-3">
+                      <label class="form-label">Status</label>
+                      <select id="af_status" class="form-select" multiple>
+                        <option>Pending</option><option>Approved</option>
+                      </select>
+                    </div>
+                    <div class="col-md-3">
+                      <label class="form-label">Budget Min (₱)</label>
+                      <input id="af_budgetMin" type="number" step="0.01" class="form-control">
+                    </div>
+                    <div class="col-md-3">
+                      <label class="form-label">Budget Max (₱)</label>
+                      <input id="af_budgetMax" type="number" step="0.01" class="form-control">
+                    </div>
+                    <div class="col-md-3">
+                      <label class="form-label">Start From</label>
+                      <input id="af_startFrom" type="date" class="form-control">
+                    </div>
+                    <div class="col-md-3">
+                      <label class="form-label">Start To</label>
+                      <input id="af_startTo" type="date" class="form-control">
+                    </div>
+                    <div class="col-md-3">
+                      <label class="form-label">End From</label>
+                      <input id="af_endFrom" type="date" class="form-control">
+                    </div>
+                    <div class="col-md-3">
+                      <label class="form-label">End To</label>
+                      <input id="af_endTo" type="date" class="form-control">
+                    </div>
+                  </div>
+                  <div class="mt-3">
+                    <button class="btn btn-primary">Apply Filters</button>
+                    <button type="button" class="btn btn-outline-secondary" onclick="resetAdvancedFilters()">Reset</button>
+                  </div>
+                </form>
+              </div>
+            </div>
+          </div>
+        </div>
+
         <div class="table-responsive">
           <table id="tblSearch" class="table table-striped table-hover table-bordered w-100">
             <thead>
@@ -244,7 +351,11 @@
           <div class="d-flex justify-content-between align-items-center mb-2">
             <h4>Admin Panel</h4>
             <div class="d-flex gap-2">
-              <button class="btn btn-outline-primary" onclick="exportPdf('all')">Export All to PDF</button>
+              <div class="btn-group">
+                <button class="btn btn-outline-primary" onclick="exportPdf('all')">PDF</button>
+                <button class="btn btn-outline-primary" onclick="exportCsv('all')">CSV</button>
+                <button class="btn btn-outline-primary" onclick="exportXlsx('all')">Excel</button>
+              </div>
               <button class="btn btn-outline-secondary" onclick="loadAdminPage()">Refresh</button>
             </div>
           </div>
@@ -295,11 +406,82 @@
         </div>
       </div>
 
+      <!-- AUDIT LOGS (ADMIN) -->
+      <div data-section="audit" class="hidden">
+        <div class="admin-only hidden">
+          <div class="d-flex justify-content-between align-items-center mb-2">
+            <h4>Audit Logs</h4>
+            <button class="btn btn-outline-secondary" onclick="loadAuditLogs()">Refresh</button>
+          </div>
+          <div class="table-responsive">
+            <table id="tblAudit" class="table table-striped table-hover table-bordered w-100">
+              <thead>
+                <tr>
+                  <th>Timestamp</th>
+                  <th>Actor</th>
+                  <th>Action</th>
+                  <th>Target</th>
+                  <th>Details</th>
+                </tr>
+              </thead>
+              <tbody></tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+
     </div><!-- /app-container -->
+
+    <!-- Modals -->
+    <div class="modal fade" id="modalChangePwd" tabindex="-1">
+      <div class="modal-dialog">
+        <form class="modal-content" onsubmit="event.preventDefault(); doChangePassword();">
+          <div class="modal-header">
+            <h5 class="modal-title">Change Password</h5>
+            <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+          </div>
+          <div class="modal-body">
+            <div class="mb-3">
+              <label class="form-label">Current Password</label>
+              <input type="password" id="cp_current" class="form-control" required>
+            </div>
+            <div class="mb-3">
+              <label class="form-label">New Password</label>
+              <input type="password" id="cp_new" class="form-control" required>
+            </div>
+            <div class="mb-3">
+              <label class="form-label">Confirm New Password</label>
+              <input type="password" id="cp_confirm" class="form-control" required>
+            </div>
+          </div>
+          <div class="modal-footer">
+            <button class="btn btn-primary">Update Password</button>
+          </div>
+        </form>
+      </div>
+    </div>
+
+    <div class="modal fade" id="modalForgot" tabindex="-1">
+      <div class="modal-dialog">
+        <form class="modal-content" onsubmit="event.preventDefault(); doRequestReset();">
+          <div class="modal-header">
+            <h5 class="modal-title">Forgot Password</h5>
+            <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+          </div>
+          <div class="modal-body">
+            <p>Enter your account email. If it exists, we’ll send a reset link valid for 1 hour.</p>
+            <input type="email" id="fp_email" class="form-control" placeholder="you@company.com" required>
+          </div>
+          <div class="modal-footer">
+            <button class="btn btn-primary">Send Reset Link</button>
+          </div>
+        </form>
+      </div>
+    </div>
 
     <script>
       /* ============================
-         AUTH
+         AUTH + PASSWORD
          ============================ */
 
       function signIn() {
@@ -308,8 +490,6 @@
         google.script.run.withSuccessHandler(res => {
           if (!res.ok) return alert(res.message);
           setAuth(res.token, res.username, res.role);
-          document.getElementById('navLinks').style.display = 'block';
-          document.getElementById('logoutBtn').style.display = 'inline-block';
           showSection('home');
           refreshAll();
         }).withFailureHandler(err => alert(err.message || err)).login(username, password);
@@ -323,35 +503,62 @@
           contact: document.getElementById('reg_contact').value.trim(),
           department: document.getElementById('reg_department').value.trim()
         };
+        google.script.run.withSuccessHandler(res => alert(res.message))
+          .withFailureHandler(err => alert(err.message || err))
+          .registerUser(payload);
+      }
+
+      function openForgot() {
+        const modal = new bootstrap.Modal(document.getElementById('modalForgot'));
+        modal.show();
+      }
+
+      function doRequestReset() {
+        const email = document.getElementById('fp_email').value.trim();
         google.script.run.withSuccessHandler(res => {
           alert(res.message);
-        }).withFailureHandler(err => alert(err.message || err)).registerUser(payload);
+          bootstrap.Modal.getInstance(document.getElementById('modalForgot')).hide();
+        }).withFailureHandler(err => alert(err.message || err)).requestPasswordReset(email);
+      }
+
+      function doChangePassword() {
+        const cur = document.getElementById('cp_current').value;
+        const np = document.getElementById('cp_new').value;
+        const cf = document.getElementById('cp_confirm').value;
+        if (np !== cf) return alert('New passwords do not match.');
+        google.script.run.withSuccessHandler(res => {
+          alert(res.message);
+          if (res.ok) bootstrap.Modal.getInstance(document.getElementById('modalChangePwd')).hide();
+        }).withFailureHandler(err => alert(err.message || err)).changePassword(window.__state.token, cur, np);
+      }
+
+      function resetPasswordWithToken() {
+        const np = document.getElementById('rp_new').value;
+        const cf = document.getElementById('rp_confirm').value;
+        if (np !== cf) return alert('New passwords do not match.');
+        const t = window.__state.resetToken;
+        if (!t) return alert('Invalid or missing reset token.');
+        google.script.run.withSuccessHandler(res => {
+          alert(res.message);
+          if (res.ok) location.href = location.origin + location.pathname; // back to normal login
+        }).withFailureHandler(err => alert(err.message || err)).resetPasswordWithToken(t, np);
       }
 
       /* ============================
          TICKETS (USER)
          ============================ */
 
-      let myTicketsTable;
       function loadMyTicketsTable(reset=true) {
         if (!window.__state.token) return;
         google.script.run.withSuccessHandler(res => {
           if (!res.ok) return alert('Failed to load tickets');
           const rows = res.tickets.map(t => ([
-            t.ticketId,
-            t.projectNumber,
-            t.projectName,
-            t.projectManager,
-            peso(t.budget),
-            formatDateYMD(t.startDate),
-            formatDateYMD(t.endDate),
-            t.priority,
-            t.assignedTeam,
+            t.ticketId, t.projectNumber, t.projectName, t.projectManager, peso(t.budget),
+            formatDateYMD(t.startDate), formatDateYMD(t.endDate), t.priority, t.assignedTeam,
             t.status,
             `<button class="btn btn-sm btn-outline-primary" onclick="openDetails('${t.ticketId}')">Open</button>`
           ]));
           renderDataTable('#tblMyTickets', rows, reset);
-          refreshAll();
         }).withFailureHandler(err => alert(err.message || err)).listMyTickets(window.__state.token);
       }
 
@@ -372,7 +579,6 @@
         google.script.run.withSuccessHandler(res => {
           if (!res.ok) return alert(res.message);
           alert(res.message);
-          // Reset form and generate new ID
           document.querySelector('[data-section="submit"] form').reset();
           document.getElementById('ticketId').value = genTicketId();
           showSection('tickets');
@@ -383,7 +589,6 @@
       /* ============================
          SEARCH & DETAILS
          ============================ */
-      let searchTable;
       function performSearch() {
         const q = document.getElementById('searchQuery').value.trim();
         google.script.run.withSuccessHandler(res => {
@@ -397,11 +602,47 @@
         }).withFailureHandler(err => alert(err.message || err)).searchTickets(window.__state.token, q);
       }
 
+      function getMultiSelectValues(id) {
+        return Array.from(document.getElementById(id).selectedOptions).map(o => o.value);
+      }
+
+      function performAdvancedSearch() {
+        const criteria = {
+          ticketId: document.getElementById('af_ticketId').value.trim(),
+          projectNumber: document.getElementById('af_projectNumber').value.trim(),
+          projectName: document.getElementById('af_projectName').value.trim(),
+          projectManager: document.getElementById('af_projectManager').value.trim(),
+          assignedTeam: document.getElementById('af_assignedTeam').value.trim(),
+          priority: getMultiSelectValues('af_priority'),
+          status: getMultiSelectValues('af_status'),
+          budgetMin: document.getElementById('af_budgetMin').value,
+          budgetMax: document.getElementById('af_budgetMax').value,
+          startFrom: document.getElementById('af_startFrom').value,
+          startTo: document.getElementById('af_startTo').value,
+          endFrom: document.getElementById('af_endFrom').value,
+          endTo: document.getElementById('af_endTo').value
+        };
+        google.script.run.withSuccessHandler(res => {
+          if (!res.ok) return alert('Advanced search failed');
+          const rows = res.tickets.map(t => ([
+            t.ticketId, t.projectNumber, t.projectName, t.projectManager,
+            peso(t.budget), formatDateYMD(t.startDate), formatDateYMD(t.endDate), t.status,
+            `<button class="btn btn-sm btn-outline-primary" onclick="openDetails('${t.ticketId}')">Open</button>`
+          ]));
+          renderDataTable('#tblSearch', rows, true);
+        }).withFailureHandler(err => alert(err.message || err)).advancedSearch(window.__state.token, criteria);
+      }
+
+      function resetAdvancedFilters() {
+        ['af_ticketId','af_projectNumber','af_projectName','af_projectManager','af_assignedTeam',
+         'af_budgetMin','af_budgetMax','af_startFrom','af_startTo','af_endFrom','af_endTo'].forEach(id => document.getElementById(id).value='');
+        ['af_priority','af_status'].forEach(id => Array.from(document.getElementById(id).options).forEach(o => o.selected = false));
+      }
+
       function openDetails(ticketId) {
         window.__state.detailTicketId = ticketId;
         showSection('details');
         reloadDetail();
-        refreshAll();
       }
 
       function reloadDetail() {
@@ -444,11 +685,8 @@
          ADMIN
          ============================ */
 
-      let pendingUsersTable, allTicketsTable;
-
       function loadAdminPage(reset=true) {
         if (window.__state.role !== 'Admin') return;
-        // Pending users
         google.script.run.withSuccessHandler(res => {
           const rows = (res.users || []).map(u => ([
             u.username, u.email, u.contact, u.department,
@@ -457,7 +695,6 @@
           renderDataTable('#tblPendingUsers', rows, true);
         }).withFailureHandler(err => alert(err.message || err)).listPendingUsers(window.__state.token);
 
-        // All tickets
         google.script.run.withSuccessHandler(res => {
           const rows = (res.tickets || []).map(t => ([
             t.ticketId, t.projectNumber, t.projectName, t.projectManager,
@@ -468,85 +705,93 @@
             `<button class="btn btn-sm btn-danger" onclick="deleteTicketAdmin('${t.ticketId}')">Delete</button>`
           ]));
           renderDataTable('#tblAllTickets', rows, true);
-          refreshAll();
         }).withFailureHandler(err => alert(err.message || err)).listAllTickets(window.__state.token);
       }
 
       function approveUser(username) {
-        google.script.run.withSuccessHandler(res => {
-          alert(res.message);
-          loadAdminPage(false);
-        }).withFailureHandler(err => alert(err.message || err)).approveUser(window.__state.token, username);
+        google.script.run.withSuccessHandler(res => { alert(res.message); loadAdminPage(false); })
+          .withFailureHandler(err => alert(err.message || err))
+          .approveUser(window.__state.token, username);
       }
 
       function approveTicketAdmin(ticketId) {
         if (!confirm('Approve this ticket?')) return;
-        google.script.run.withSuccessHandler(res => {
-          alert(res.message);
-          loadAdminPage(false);
-        }).withFailureHandler(err => alert(err.message || err)).approveTicket(window.__state.token, ticketId);
+        google.script.run.withSuccessHandler(res => { alert(res.message); loadAdminPage(false); })
+          .withFailureHandler(err => alert(err.message || err))
+          .approveTicket(window.__state.token, ticketId);
       }
 
       function deleteTicketAdmin(ticketId) {
         if (!confirm('Delete this ticket? This cannot be undone.')) return;
-        google.script.run.withSuccessHandler(res => {
-          alert(res.message);
-          loadAdminPage(false); // refresh page after deleting
-        }).withFailureHandler(err => alert(err.message || err)).deleteTicket(window.__state.token, ticketId);
+        google.script.run.withSuccessHandler(res => { alert(res.message); loadAdminPage(false); })
+          .withFailureHandler(err => alert(err.message || err))
+          .deleteTicket(window.__state.token, ticketId);
       }
 
       /* ============================
-         EXPORT PDF
+         EXPORTS
          ============================ */
+
+      function downloadBase64(base64, filename, mime) {
+        const link = document.createElement('a');
+        link.href = `data:${mime};base64,${base64}`;
+        link.download = filename;
+        document.body.appendChild(link); link.click(); document.body.removeChild(link);
+      }
 
       function exportPdf(scope) {
         google.script.run.withSuccessHandler(res => {
           if (!res.ok) return alert('Export failed.');
-          const link = document.createElement('a');
-          link.href = `data:application/pdf;base64,${res.base64}`;
-          link.download = res.filename || 'tickets.pdf';
-          document.body.appendChild(link);
-          link.click();
-          document.body.removeChild(link);
+          downloadBase64(res.base64, res.filename || 'tickets.pdf', 'application/pdf');
         }).withFailureHandler(err => alert(err.message || err)).exportTicketsPdf(window.__state.token, scope);
       }
 
+      function exportCsv(scope) {
+        google.script.run.withSuccessHandler(res => {
+          if (!res.ok) return alert('Export failed.');
+          downloadBase64(res.base64, res.filename || 'tickets.csv', 'text/csv');
+        }).withFailureHandler(err => alert(err.message || err)).exportTicketsCsv(window.__state.token, scope);
+      }
+
+      function exportXlsx(scope) {
+        google.script.run.withSuccessHandler(res => {
+          if (!res.ok) return alert('Export failed.');
+          downloadBase64(res.base64, res.filename || 'tickets.xlsx', 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
+        }).withFailureHandler(err => alert(err.message || err)).exportTicketsExcel(window.__state.token, scope);
+      }
+
       /* ============================
-         DataTables helper
+         AUDIT
          ============================ */
 
-      const tables = {};
-      function renderDataTable(selector, rows, reset) {
-        const el = $(selector);
-        if (tables[selector] && reset) {
-          tables[selector].clear().destroy();
-          el.find('tbody').empty();
-        }
-        if (!tables[selector]) {
-          tables[selector] = el.DataTable({
-            data: rows,
-            pageLength: 10,
-            lengthMenu: [10, 25, 50, 100],
-            order: [], // no default order
-            columns: el.find('thead th').toArray().map(th => ({ title: th.textContent })),
-            deferRender: true,
-          });
-        } else {
-          tables[selector].clear();
-          tables[selector].rows.add(rows).draw();
-        }
+      function loadAuditLogs(reset=true) {
+        google.script.run.withSuccessHandler(res => {
+          if (!res.ok) return alert('Failed to load audit logs');
+          const rows = (res.logs || []).map(l => ([
+            new Date(l.timestamp).toLocaleString(), l.actor, l.action, l.target, l.details
+          ]));
+          renderDataTable('#tblAudit', rows, true);
+        }).withFailureHandler(err => alert(err.message || err)).listAudit(window.__state.token, 500);
       }
 
       /* ============================
          On load
          ============================ */
       (function init() {
+        // Read reset token from server template
+        const tokenFromServer = '<?= resetToken ?>';
+        if (tokenFromServer) {
+          window.__state.resetToken = tokenFromServer;
+          document.getElementById('resetSection').style.display = 'block';
+        }
+
         showSection('login');
         loadAuthFromStorage();
-        // Toggle nav display when auth changes
+
         const navVisible = !!localStorage.getItem('tk_token');
         document.getElementById('navLinks').style.display = navVisible ? 'block' : 'none';
         document.getElementById('logoutBtn').style.display = navVisible ? 'inline-block' : 'none';
+        document.getElementById('changePwdBtn').style.display = navVisible ? 'inline-block' : 'none';
       })();
     </script>
 
