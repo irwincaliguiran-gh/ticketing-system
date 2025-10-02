@@ -1,0 +1,34 @@
+/* style.css */
+/* Custom overrides for Bootstrap components */
+
+body {
+  background-color: #f8f9fa;
+}
+
+.card {
+  box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+}
+
+.navbar-brand {
+  font-weight: 600;
+  letter-spacing: 1px;
+}
+
+h4, h5 {
+  color: #343a40;
+}
+
+button:focus, input:focus, select:focus, textarea:focus {
+  box-shadow: 0 0 0 0.2rem rgba(0,123,255,.25);
+}
+
+.list-group-item strong {
+  width: 120px;
+  display: inline-block;
+}
+
+@media (max-width: 576px) {
+  .card {
+    margin: 0 15px;
+  }
+}
