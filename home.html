@@ -1,0 +1,125 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Dashboard ‑ Ticketing System</title>
+  <link
+    href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css"
+    rel="stylesheet"
+  />
+</head>
+<body>
+  <nav class="navbar navbar-expand-lg navbar-dark bg-primary">
+    <div class="container-fluid">
+      <a class="navbar-brand" href="#">Ticketing</a>
+      <button
+        class="navbar-toggler"
+        data-bs-toggle="collapse"
+        data-bs-target="#navItems"
+      >
+        <span class="navbar-toggler-icon"></span>
+      </button>
+      <div class="collapse navbar-collapse" id="navItems">
+        <ul class="navbar-nav ms-auto">
+          <li class="nav-item">
+            <a class="nav-link" href="view-tickets.html">View Tickets</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" href="#submitSection">Submit Ticket</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" href="#" id="logoutBtn">Logout</a>
+          </li>
+        </ul>
+      </div>
+    </div>
+  </nav>
+
+  <main class="container my-4">
+    <section id="submitSection">
+      <h5>Submit New Ticket</h5>
+      <form id="ticketForm">
+        <div class="row g-2">
+          <div class="col-md-4">
+            <label class="form-label">Project #</label>
+            <input
+              type="text"
+              class="form-control"
+              id="projNumber"
+              required
+            />
+          </div>
+          <div class="col-md-8">
+            <label class="form-label">Project Name</label>
+            <input
+              type="text"
+              class="form-control"
+              id="projName"
+              required
+            />
+          </div>
+        </div>
+        <div class="row g-2 mt-2">
+          <div class="col-md-6">
+            <label class="form-label">Manager</label>
+            <input
+              type="text"
+              class="form-control"
+              id="projManager"
+              required
+            />
+          </div>
+          <div class="col-md-6">
+            <label class="form-label">Budget (₱)</label>
+            <input
+              type="number"
+              class="form-control"
+              id="projBudget"
+              required
+            />
+          </div>
+        </div>
+        <div class="row g-2 mt-2">
+          <div class="col-md-6">
+            <label class="form-label">Start Date</label>
+            <input type="date" class="form-control" id="startDate" required />
+          </div>
+          <div class="col-md-6">
+            <label class="form-label">End Date</label>
+            <input type="date" class="form-control" id="endDate" required />
+          </div>
+        </div>
+        <div class="row g-2 mt-2">
+          <div class="col-md-6">
+            <label class="form-label">Priority</label>
+            <select class="form-select" id="priorityLevel" required>
+              <option>Low</option>
+              <option>Medium</option>
+              <option>High</option>
+            </select>
+          </div>
+          <div class="col-md-6">
+            <label class="form-label">Assigned Team</label>
+            <input
+              type="text"
+              class="form-control"
+              id="assignedTeam"
+              required
+            />
+          </div>
+        </div>
+        <div class="mt-2">
+          <label class="form-label">Remarks</label>
+          <textarea class="form-control" id="remarks" rows="2"></textarea>
+        </div>
+        <div class="mt-3 d-grid">
+          <button class="btn btn-primary" type="submit">Submit Ticket</button>
+        </div>
+      </form>
+    </section>
+  </main>
+
+  <script src="script.js"></script>
+</body>
+</html>
