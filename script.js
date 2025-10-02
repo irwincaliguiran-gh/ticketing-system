@@ -291,3 +291,56 @@ function renderTicketDetails(t) {
       </ul>
     </div>`;
 }
+// ====================
+// 7. fetchApi & CORS Wrapper
+// ====================
+async function fetchApi(action, payload = {}) {
+  const res = await fetch(BASE_URL, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ action, ...payload })
+  });
+  return res.json();
+}
+
+// ====================
+// 8. Complete showDetails (close template and container)
+// ====================
+function showDetails(t) {
+  const container = document.getElementById('ticketDetails');
+  container.innerHTML = `
+    <div class="card">
+      <div class="card-header bg-primary text-white">
+        ${t.TicketID} — ${t.ProjectName}
+      </div>
+      <ul class="list-group list-group-flush">
+        <li class="list-group-item"><strong>Project #:</strong> ${t.ProjectNumber}</li>
+        <li class="list-group-item"><strong>Manager:</strong> ${t.ProjectManager}</li>
+        <li class="list-group-item"><strong>Budget:</strong> ₱${t.Budget.toLocaleString()}</li>
+        <li class="list-group-item"><strong>Start:</strong> ${new Date(t.StartDate).toLocaleDateString()}</li>
+        <li class="list-group-item"><strong>End:</strong> ${new Date(t.EndDate).toLocaleDateString()}</li>
+        <li class="list-group-item"><strong>Priority:</strong> ${t.Priority}</li>
+        <li class="list-group-item"><strong>Assigned Team:</strong> ${t.AssignedTeam}</li>
+        <li class="list-group-item"><strong>Remarks:</strong> ${t.Remarks}</li>
+        <li class="list-group-item"><strong>Status:</strong> ${t.Status}</li>
+      </ul>
+    </div>`;
+}
+
+// ====================
+// 9. PDF Export (view-tickets.html)
+// ====================
+document.addEventListener('DOMContentLoaded', () => {
+  const btn = document.getElementById('exportPdf');
+  if (btn) {
+    btn.addEventListener('click', () => {
+      const { jsPDF } = window.jspdf;
+      const doc = new jsPDF({ unit: 'pt', format: 'letter' });
+      doc.html(document.querySelector('#userTicketsTbl'), {
+        callback: () => doc.save('tickets.pdf'),
+        margin: [40, 40, 40, 40],
+        autoPaging: 'text'
+      });
+    });
+  }
+});
