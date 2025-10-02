@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>My Tickets ‑ Ticketing System</title>
+  <link
+    href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css"
+    rel="stylesheet"
+  />
+</head>
+<body>
+  <main class="container my-4">
+    <h5>My Tickets</h5>
+    <input
+      type="text"
+      class="form-control mb-3"
+      id="searchInput"
+      placeholder="Search by Ticket ID or Project #"
+    />
+    <table class="table table-hover" id="userTicketsTbl">
+      <thead>
+        <tr>
+          <th>TicketID</th>
+          <th>Project #</th>
+          <th>Name</th>
+          <th>Status</th>
+          <th>View</th>
+        </tr>
+      </thead>
+      <tbody></tbody>
+    </table>
+  </main>
+
+  <script src="script.js"></script>
+</body>
+</html>
